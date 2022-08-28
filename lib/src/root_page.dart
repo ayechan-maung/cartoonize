@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cartoonize/local_db/file_model.dart';
@@ -7,9 +8,11 @@ import 'package:cartoonize/service/snapshot_response.dart';
 import 'package:cartoonize/src/cartoon_page.dart';
 import 'package:cartoonize/src/recent_images.dart';
 import 'package:cartoonize/src/slider_widget.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -39,9 +42,17 @@ class _RootPageState extends State<RootPage> {
     LocalDatabase.instance.storeImage(img);
   }
 
+  ConnectivityResult _connectionStatus = ConnectivityResult.none;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
   @override
   void initState() {
     super.initState();
+
+    initConnectivity();
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
 
     bloc.mvStream().listen((snapshot) {
       if (snapshot.hasData) {
@@ -198,15 +209,18 @@ class _RootPageState extends State<RootPage> {
                             SizedBox(height: 20),
                             Text(
                               'Upload your photo to get amazing cartoon image.',
+                              textAlign: TextAlign.center,
                               style: GoogleFonts.slabo27px(textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
                             )
                           ],
                         ),
                       ),
                     Container(
-                      height: 50,
-                      decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade400))),
+                      height: 70,
+                      alignment: Alignment.centerLeft,
+                      // decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade400))),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           IconButton(
                             onPressed: () async {
@@ -334,9 +348,49 @@ class _RootPageState extends State<RootPage> {
     );
   }
 
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+    try {
+      result = await _connectivity.checkConnectivity();
+
+      if (result == ConnectivityResult.none) {
+        _connectionToast('Connection Lost!', Colors.redAccent);
+      }
+    } on PlatformException catch (e) {
+      return;
+    }
+
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    setState(() {
+      _connectionStatus = result;
+    });
+    if (result == ConnectivityResult.mobile) {
+      _connectionToast('Connected!', Colors.green);
+    }
+    if (result == ConnectivityResult.wifi) {
+      _connectionToast('Connected!', Colors.green);
+    }
+
+    if (result == ConnectivityResult.none) {
+      _connectionToast('Connection Lost!', Colors.redAccent);
+    }
+  }
+
+  _connectionToast(String message, Color color) {
+    Fluttertoast.showToast(msg: message, backgroundColor: color);
+  }
+
   @override
   void dispose() {
     bloc.dispose();
+    _connectivitySubscription.cancel();
     super.dispose();
   }
 }
