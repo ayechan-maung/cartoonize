@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonize/app_utils/own_permission.dart';
 import 'package:cartoonize/local_db/file_model.dart';
 import 'package:cartoonize/local_db/local_db.dart';
+import 'package:cartoonize/src/photo_view_overlay.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -57,49 +58,55 @@ class _RecentImagesState extends State<RecentImages> {
                         crossAxisSpacing: 2,
                         itemCount: images.length,
                         itemBuilder: (context, index) {
-                          return Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              CachedNetworkImage(
-                                imageUrl: images[index].imageUrl ?? "",
-                                placeholder: (context, str) => Icon(Icons.image),
-                                errorWidget: (context, str, tra) => Icon(Icons.info, color: Colors.grey),
-                              ),
-                              PopupMenuButton(
-                                  padding: EdgeInsets.all(2),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  onSelected: (s) {
-                                    if (s == 1) {
-                                      saveDialog(context, images[index].imageUrl!);
-                                    } else {
-                                      deleteDialog(context, images[index].id!);
-                                    }
-                                  },
-                                  itemBuilder: (context) {
-                                    return [
-                                      PopupMenuItem(
-                                        child: Icon(Icons.download),
-                                        value: 1,
-                                      ),
-                                      PopupMenuItem(
-                                        value: 2,
-                                        child: Icon(
-                                          Icons.delete_rounded,
-                                          color: Colors.redAccent,
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(PhotoViewOverlay(images[index].imageUrl));
+                            },
+                            child: Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: images[index].imageUrl ?? "",
+                                  placeholder: (context, str) => Icon(Icons.image),
+                                  errorWidget: (context, str, tra) => Icon(Icons.info, color: Colors.grey),
+                                ),
+                                PopupMenuButton(
+                                    padding: EdgeInsets.all(2),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                    constraints: BoxConstraints(),
+                                    onSelected: (s) {
+                                      if (s == 1) {
+                                        saveDialog(context, images[index].imageUrl!);
+                                      } else {
+                                        deleteDialog(context, images[index].id!);
+                                      }
+                                    },
+                                    itemBuilder: (context) {
+                                      return [
+                                        PopupMenuItem(
+                                          child: Icon(Icons.download),
+                                          value: 1,
                                         ),
-                                        onTap: () {
-                                          print('hi');
-                                        },
-                                      ),
-                                    ];
-                                  })
-                            ],
+                                        PopupMenuItem(
+                                          value: 2,
+                                          child: Icon(
+                                            Icons.delete_rounded,
+                                            color: Colors.redAccent,
+                                          ),
+                                          onTap: () {
+                                            print('hi');
+                                          },
+                                        ),
+                                      ];
+                                    })
+                              ],
+                            ),
                           );
                         },
                       );
                     });
               } else {
-                return Center(child: Text('[]'));
+                return Center(child: Text('Empty image.'));
               }
             } else {
               return Center(

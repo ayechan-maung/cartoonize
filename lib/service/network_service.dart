@@ -8,7 +8,8 @@ class NetworkRepository {
       FormData? fromData,
       required CallBackFunction callBack,
       ProgressCallbackFunction? progressCallback,
-      ReceiveProgress? receiveProgress}) async {
+      ReceiveProgress? receiveProgress,
+      CancelToken? cancelToken}) async {
     try {
       BaseOptions options = BaseOptions();
       Response response;
@@ -17,7 +18,8 @@ class NetworkRepository {
       response = await dio.post(API,
           data: fromData,
           onSendProgress: (int count, int total) => progressCallback!(count / total),
-          onReceiveProgress: (int count, int total) => receiveProgress!(count / total));
+          onReceiveProgress: (int count, int total) => receiveProgress!(count / total),
+          cancelToken: cancelToken);
       print('status code --> ${response.statusCode}');
       print('fd==> $fromData');
       SnapshotResponse snapshot = SnapshotResponse();

@@ -1,10 +1,7 @@
 import 'package:cartoonize/pages/splash_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -19,16 +16,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.grey.shade200,
-        primaryColor: Color(0xff4A148C),
+        primaryColor: Color(0xff023e8a),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          iconTheme: IconThemeData(color: Colors.teal),
-          titleTextStyle: TextStyle(color: Color(0xff4A148C), fontSize: 20, fontWeight: FontWeight.w600),
+          iconTheme: IconThemeData(color: Color(0xff023e8a)),
+          titleTextStyle: TextStyle(color: Color(0xff023e8a), fontSize: 20, fontWeight: FontWeight.w600),
         ),
-        buttonTheme: ButtonThemeData(buttonColor: Color(0xff4A148C)),
-        iconTheme: IconThemeData(color: Colors.teal),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Color(0xff90A4AE)),
+        buttonTheme: ButtonThemeData(buttonColor: Color(0xff023e8a)),
+        iconTheme: IconThemeData(color: Color(0xff023e8a)),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Color(0xff023e8a)),
       ),
       home: SplashScreen(),
     );

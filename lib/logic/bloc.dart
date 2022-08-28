@@ -10,18 +10,23 @@ class Bloc extends NetworkRepository {
   PublishSubject<double> progressController = PublishSubject<double>();
   Stream<double> progressStream() => progressController.stream;
 
+  var progress = 0.0;
+  SnapshotResponse snap = SnapshotResponse();
+  CancelToken? cancelToken;
+
   getMv({Map<String, dynamic>? param, FormData? fd}) async {
-    SnapshotResponse snap = SnapshotResponse(data: null, status: Status.loading);
+    snap = SnapshotResponse(data: null, status: Status.loading);
+    cancelToken = CancelToken();
     controller.sink.add(snap);
 
     await fetch(
       params: param,
       fromData: fd,
+      cancelToken: cancelToken,
       callBack: (SnapshotResponse snapshot) {
         print(snapshot.status);
         if (snapshot.hasData) {
           snap.data = snapshot.data;
-          print('data ${snapshot.data}');
           if (!controller.isClosed) {
             controller.sink.add(snapshot);
           }
@@ -30,14 +35,21 @@ class Bloc extends NetworkRepository {
         }
       },
       progressCallback: (i) {
-        var progress = i * 0.8;
+        progress = i * 0.8;
         // print('progress->>> $i');
         progressController.sink.add(progress);
       },
-      receiveProgress: (i) {
-        print('receive progress--> $i');
-      },
+      receiveProgress: (i) {},
     );
+  }
+
+  cancelRequest() {
+    if (cancelToken != null) {
+      cancelToken!.cancel();
+      progress = 0.0;
+      snap = SnapshotResponse();
+      progressController.sink.add(progress);
+    }
   }
 
   dispose() {

@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonize/app_utils/own_permission.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:octo_image/octo_image.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,7 +15,8 @@ import 'package:share_plus/share_plus.dart';
 
 class CartoonPage extends HookWidget {
   final String? image;
-  CartoonPage({Key? key, this.image}) : super(key: key);
+  final String? imagePath;
+  CartoonPage({Key? key, this.image, this.imagePath}) : super(key: key);
 
   var imgProgress;
   OwnPermissionHandler permissionHandler = OwnPermissionHandler();
@@ -27,15 +31,51 @@ class CartoonPage extends HookWidget {
       return () {};
     }, []);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(
+          'Cartoonized',
+          style: GoogleFonts.kalam(textStyle: TextStyle(color: Theme.of(context).primaryColor)),
+        ),
+      ),
       body: Column(
         children: [
-          OctoImage(
-            height: MediaQuery.of(context).size.height - 180,
-            image: CachedNetworkImageProvider(image ?? ""),
-            placeholderBuilder: OctoPlaceholder.blurHash('LEHV6nWB2yk8pyo0adR*.7kCMdnj'),
-            errorBuilder: OctoError.icon(color: Colors.red),
-            fit: BoxFit.cover,
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              OctoImage(
+                height: MediaQuery.of(context).size.height * 0.65,
+                width: MediaQuery.of(context).size.width * 0.8,
+                image: CachedNetworkImageProvider(image ?? ""),
+                placeholderBuilder: OctoPlaceholder.blurHash('LEHV6nWB2yk8pyo0adR*.7kCMdnj'),
+                errorBuilder: OctoError.icon(color: Colors.red),
+                fit: BoxFit.cover,
+              ),
+              Container(
+                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white)),
+                height: 90,
+                width: 90,
+                margin: EdgeInsets.all(10),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.file(
+                    File(imagePath!),
+                    height: 90,
+                    width: 90,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, str, tra) => Icon(Icons.info, color: Colors.grey),
+                  ),
+                ),
+              )
+            ],
+          ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text(
+              'Your image has been successfully cartoonized. Please save into your phone and share with others.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.courgette(textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+            ),
           ),
           Spacer(),
           Container(
@@ -45,7 +85,7 @@ class CartoonPage extends HookWidget {
               children: [
                 IconButton(
                   onPressed: shareImage,
-                  icon: Icon(Icons.share, color: shareFile.value == '' ? Colors.grey : Colors.teal),
+                  icon: Icon(Icons.share, color: shareFile.value == '' ? Colors.grey : Theme.of(context).primaryColor),
                 ),
                 IconButton(
                   onPressed: saveImage,

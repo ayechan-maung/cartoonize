@@ -1,5 +1,6 @@
 import 'package:cartoonize/src/root_page.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -13,17 +14,19 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 2), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => RootPage()),
-          (route) => false);
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => RootPage()), (route) => false);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       body: Center(
-        child: Text('CARTOONIZE'),
+        child: Text(
+          'CARTOONIZE',
+          style: GoogleFonts.pacifico(textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Colors.white)),
+        ),
       ),
     );
   }
