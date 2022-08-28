@@ -1,4 +1,4 @@
-package com.example.cartoonize
+package com.ayechanmaung.cartoonize
 
 import io.flutter.embedding.android.FlutterActivity
 

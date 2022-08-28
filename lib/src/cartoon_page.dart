@@ -8,6 +8,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:octo_image/octo_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CartoonPage extends HookWidget {
   final String? image;
@@ -19,6 +20,7 @@ class CartoonPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     imgProgress = useState(0.0);
+    shareFile = useState('');
 
     useEffect(() {
       permissionHandler.storagePermission();
@@ -42,8 +44,8 @@ class CartoonPage extends HookWidget {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () async {},
-                  icon: Icon(Icons.share),
+                  onPressed: shareImage,
+                  icon: Icon(Icons.share, color: shareFile.value == '' ? Colors.grey : Colors.teal),
                 ),
                 IconButton(
                   onPressed: saveImage,
@@ -72,11 +74,14 @@ class CartoonPage extends HookWidget {
     );
   }
 
+  var shareFile;
+
   saveImage() async {
     bool storageCheck = await permissionHandler.storagePermission();
     if (storageCheck) {
       var appDir = await getTemporaryDirectory();
       String savePath = appDir.path + '/cartoon.png';
+      shareFile.value = savePath;
       await Dio().download(image!, savePath, onReceiveProgress: (count, total) {
         double res = count / total;
         imgProgress.value = res;
@@ -90,5 +95,12 @@ class CartoonPage extends HookWidget {
     } else {
       Fluttertoast.showToast(msg: 'You denied storage permission', backgroundColor: Colors.amber, textColor: Colors.black);
     }
+  }
+
+  shareImage() async {
+    if (shareFile.value == '') {
+      Fluttertoast.showToast(msg: 'Please save the photo first.', backgroundColor: Colors.amber, textColor: Colors.black);
+    }
+    await Share.shareFiles([shareFile.value], text: 'Hi, this is my cartoonize photo, check it out.');
   }
 }

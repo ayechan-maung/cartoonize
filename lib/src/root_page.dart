@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:cartoonize/firebase/firebase_service.dart';
+import 'package:cartoonize/local_db/file_model.dart';
+import 'package:cartoonize/local_db/local_db.dart';
 import 'package:cartoonize/logic/bloc.dart';
 import 'package:cartoonize/service/snapshot_response.dart';
 import 'package:cartoonize/src/cartoon_page.dart';
+import 'package:cartoonize/src/recent_images.dart';
 import 'package:cartoonize/src/slider_widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,11 +28,24 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> {
   ImagePicker imgPicker = ImagePicker();
   XFile? file;
-  bool _cropping = false;
 
   Bloc bloc = Bloc();
   final GlobalKey<NavigatorState> key = new GlobalKey<NavigatorState>();
   final pvController = PhotoViewController();
+  FirebaseService firebase = FirebaseService();
+
+  Map<String, String> fireMap = {};
+
+  setFireStore(String imgUrl) {
+    fireMap['created_at'] = DateTime.now().toString();
+    fireMap['image_url'] = imgUrl;
+  }
+
+  _storeImage(String image) {
+    final img = ImgFile(imageUrl: image, dateTime: DateTime.now(), description: '');
+
+    LocalDatabase.instance.storeImage(img);
+  }
 
   @override
   void initState() {
@@ -38,21 +55,20 @@ class _RootPageState extends State<RootPage> {
       if (snapshot.hasData) {
         // SnapshotResponse snap = snapshot.data!;
         Map<String, dynamic>? data = snapshot.data;
-        print('data--> ${snapshot.data}');
+
+        ///Firebase
+        _storeImage(data!['image_url']);
+
         Fluttertoast.showToast(msg: 'Your image generated successfully to cartoonize.', backgroundColor: Colors.teal);
         Navigator.push(
           key.currentContext!,
           MaterialPageRoute(
             builder: (context) => CartoonPage(
-              image: data!['image_url'],
+              image: data['image_url'],
             ),
           ),
         );
       }
-    });
-
-    bloc.progressStream().listen((value) {
-      print('progress in init-------> $value');
     });
   }
 
@@ -81,7 +97,24 @@ class _RootPageState extends State<RootPage> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       key: key,
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecentImages()));
+          },
+          icon: Icon(Icons.list),
+        ),
+        actions: [
+          // IconButton(
+          //   onPressed: () {
+          //     // fireMap['image_url'] =
+          //     //     'https://vhr-dev.sfo3.cdn.digitaloceanspaces.com/vin-prediction/0925352d-e835-4325-8704-bf83d4cd3e27.jpg';
+          //     // firebase.storeImage(fireMap);
+          //   },
+          //   icon: Icon(Icons.upload),
+          // )
+        ],
+      ),
       body: Column(children: [
         Text(
           'Let\'s Cartoonize',
@@ -112,6 +145,7 @@ class _RootPageState extends State<RootPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             'Let\'s get the photo of yours to cartoon,',
+                            textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                           ),
                         ),
