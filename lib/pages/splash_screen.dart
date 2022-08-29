@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      // backgroundColor: Theme.of(context).primaryColor.withOpacity(0.9),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: 12),
             Text(
               'CARTOONIZE',
-              style: GoogleFonts.pacifico(textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Colors.white)),
+              style: GoogleFonts.pacifico(textStyle: Theme.of(context).textTheme.bodyLarge),
             ),
           ],
         ),

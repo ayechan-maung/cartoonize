@@ -21,7 +21,7 @@ class SliderWidget extends HookWidget {
                 aspectRatio: 9 / 16,
                 autoPlay: true,
                 initialPage: 0,
-                height: 400,
+                height: 300,
                 enlargeStrategy: CenterPageEnlargeStrategy.height,
                 viewportFraction: .65,
                 autoPlayAnimationDuration: Duration(milliseconds: 1500),
@@ -41,7 +41,9 @@ class SliderWidget extends HookWidget {
                   margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
+                    color: (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black)
                         .withOpacity(current.value == entry.key ? 0.9 : 0.4),
                   ),
                 ),

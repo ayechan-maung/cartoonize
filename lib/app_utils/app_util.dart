@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AppUtils {
-  static dialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog();
-        });
+  static getAppInfo() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    print(packageInfo.version);
   }
 }

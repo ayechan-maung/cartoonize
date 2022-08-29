@@ -7,6 +7,7 @@ import 'package:cartoonize/logic/bloc.dart';
 import 'package:cartoonize/service/snapshot_response.dart';
 import 'package:cartoonize/src/cartoon_page.dart';
 import 'package:cartoonize/src/recent_images.dart';
+import 'package:cartoonize/src/setting_page.dart';
 import 'package:cartoonize/src/slider_widget.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
@@ -103,209 +104,230 @@ class _RootPageState extends State<RootPage> {
       body: NestedScrollView(
         headerSliverBuilder: (context, b) {
           return [
-            SliverAppBar(
-              elevation: 0,
-              stretch: true,
-              primary: true,
-              pinned: true,
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecentImages()));
-                },
-                icon: Icon(Icons.list),
-              ),
-              expandedHeight: 100,
-              flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  'Cartoonize',
-                  style: GoogleFonts.kalam(textStyle: TextStyle(color: Theme.of(context).primaryColor)),
-                ),
-              ),
-            )
-          ];
-        },
-        body: StreamBuilder<SnapshotResponse>(
-          stream: bloc.mvStream(),
-          initialData: SnapshotResponse(data: null),
-          builder: (context, snapshot) {
-            SnapshotResponse snap = snapshot.data!;
-            return Stack(
-              alignment: Alignment.center,
-              children: [
-                Column(
+            CupertinoSliverNavigationBar(
+                trailing: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if (file == null)
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SliderWidget(imgList: [
-                              imgWidget(context, 'images/evan.jpeg'),
-                              imgWidget(context, 'images/hormworth.jpeg'),
-                              imgWidget(context, 'images/she.jpeg'),
-                              imgWidget(context, 'images/she2.webp'),
-                            ]),
-                            SizedBox(height: 20),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Let\'s get the photo of yours to cartoon,',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.pacifico(
-                                    textStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.grey.shade700)),
-                              ),
-                            ),
-                            Text(
-                              'have fun!',
-                              style: GoogleFonts.pacifico(
-                                  textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.grey.shade700)),
-                            )
-                          ],
-                        ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => RecentImages()),
+                        );
+                      },
+                      icon: Icon(
+                        CupertinoIcons.square_list,
+                        size: 25,
                       ),
-                    if (file != null)
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Stack(
-                              fit: StackFit.passthrough,
-                              alignment: Alignment.topRight,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    height: size.height * 0.6,
-                                    width: size.width * 0.7,
-                                    child: PhotoView(
-                                      controller: pvController,
-                                      imageProvider: FileImage(
-                                        File(file!.path),
-                                        // width: size.width * 0.8,
-                                        // height: size.height * 0.7,
-                                        // fit: BoxFit.cover,
-                                      ),
-                                      backgroundDecoration: BoxDecoration(color: Colors.grey.shade200),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(0.4)),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        file = null;
-                                      });
-                                    },
-                                    padding: EdgeInsets.all(4),
-                                    constraints: BoxConstraints(),
-                                    icon: Icon(CupertinoIcons.clear, color: Colors.white),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 20),
-                            Text(
-                              'Upload your photo to get amazing cartoon image.',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.slabo27px(textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
-                            )
-                          ],
-                        ),
-                      ),
-                    Container(
-                      height: 70,
-                      alignment: Alignment.centerLeft,
-                      // decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade400))),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () async {
-                              file = await imgPicker.pickImage(source: ImageSource.camera);
-
-                              setState(() {});
-                            },
-                            icon: Icon(Icons.camera_alt_rounded),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              file = await imgPicker.pickImage(source: ImageSource.gallery);
-
-                              setState(() {});
-                            },
-                            icon: Icon(Icons.image),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              if (file == null) {
-                                Fluttertoast.showToast(
-                                  msg: 'Please pick the image first.',
-                                  backgroundColor: Colors.amber,
-                                  textColor: Colors.black,
-                                  gravity: ToastGravity.BOTTOM,
-                                );
-                              } else {
-                                File f = await cropImg(File(file!.path));
-                                file = XFile(f.path);
-                                setState(() {});
-                              }
-                            },
-                            icon: Icon(Icons.crop, color: file == null ? Colors.grey : Theme.of(context).primaryColor),
-                          )
-                        ],
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingPage()));
+                        },
+                        icon: Icon(
+                          CupertinoIcons.settings,
+                          size: 25,
+                        ))
+                  ],
+                ),
+                // expandedHeight: 100,
+                largeTitle: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ClipRRect(borderRadius: BorderRadius.circular(6), child: Image.asset('images/logo.png', width: 25, height: 25)),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 6.0),
+                      child: Text(
+                        'Cartoonize',
+                        style: GoogleFonts.kalam(textStyle: Theme.of(context).textTheme.titleLarge),
                       ),
                     ),
                   ],
-                ),
-                if (snap.status == Status.loading)
-                  Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Colors.black.withOpacity(0.5),
-                    child: SizedBox(
-                      height: 50,
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                ))
+          ];
+        },
+        body: SafeArea(
+          bottom: true,
+          child: StreamBuilder<SnapshotResponse>(
+            stream: bloc.mvStream(),
+            initialData: SnapshotResponse(data: null),
+            builder: (context, snapshot) {
+              SnapshotResponse snap = snapshot.data!;
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  Column(
+                    children: [
+                      if (file == null)
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SliderWidget(imgList: [
+                                imgWidget(context, 'images/evan.jpeg'),
+                                imgWidget(context, 'images/hormworth.jpeg'),
+                                imgWidget(context, 'images/she.jpeg'),
+                                imgWidget(context, 'images/she2.webp'),
+                              ]),
+                              SizedBox(height: 20),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Let\'s get the photo of yours to cartoon,',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.pacifico(textStyle: Theme.of(context).textTheme.bodyLarge),
+                                ),
+                              ),
+                              Text(
+                                'have fun!',
+                                style: GoogleFonts.pacifico(textStyle: Theme.of(context).textTheme.bodyLarge),
+                              )
+                            ],
+                          ),
+                        ),
+                      if (file != null)
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Stack(
+                                fit: StackFit.passthrough,
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      height: size.height * 0.6,
+                                      width: size.width * 0.7,
+                                      child: PhotoView(
+                                        controller: pvController,
+                                        imageProvider: FileImage(
+                                          File(file!.path),
+                                          // width: size.width * 0.8,
+                                          // height: size.height * 0.7,
+                                          // fit: BoxFit.cover,
+                                        ),
+                                        backgroundDecoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(0.4)),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          file = null;
+                                        });
+                                      },
+                                      padding: EdgeInsets.all(4),
+                                      constraints: BoxConstraints(),
+                                      icon: Icon(CupertinoIcons.clear, color: Colors.white),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Text(
+                                'Upload your photo to get amazing cartoon image.',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.slabo27px(textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                              )
+                            ],
+                          ),
+                        ),
+                      Container(
+                        height: 70,
+                        alignment: Alignment.centerLeft,
+                        // decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade400))),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            StreamBuilder<double>(
-                                stream: bloc.progressStream(),
-                                initialData: 0.0,
-                                builder: (context, snapshot) {
-                                  // if (snapshot.hasData) {
-                                  double progress = snapshot.data!;
+                            IconButton(
+                              onPressed: () async {
+                                file = await imgPicker.pickImage(source: ImageSource.camera);
 
-                                  // if (progress != 1.0)
-                                  return LinearPercentIndicator(
-                                    backgroundColor: Colors.white,
-                                    percent: progress,
-                                    lineHeight: 20,
-                                    width: 200,
-                                    barRadius: Radius.circular(12),
-                                    linearGradient: LinearGradient(
-                                      colors: [Colors.teal.shade200, Colors.teal.shade300, Colors.teal.shade400, Colors.teal],
-                                    ),
-                                    animation: true,
-                                    alignment: MainAxisAlignment.center,
-                                    center: Text(
-                                      '${(progress * 100).toStringAsFixed(0)} %',
-                                      style: TextStyle(color: progress > .7 ? Colors.white : Colors.black),
-                                    ),
+                                setState(() {});
+                              },
+                              icon: Icon(CupertinoIcons.photo_camera_solid),
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                file = await imgPicker.pickImage(source: ImageSource.gallery);
+
+                                setState(() {});
+                              },
+                              icon: Icon(CupertinoIcons.photo),
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                if (file == null) {
+                                  Fluttertoast.showToast(
+                                    msg: 'Please pick the image first.',
+                                    backgroundColor: Colors.amber,
+                                    textColor: Colors.black,
+                                    gravity: ToastGravity.BOTTOM,
                                   );
-                                }),
-                            Text('Processing...', style: TextStyle(fontSize: 18, color: Colors.white)),
+                                } else {
+                                  File f = await cropImg(File(file!.path));
+                                  file = XFile(f.path);
+                                  setState(() {});
+                                }
+                              },
+                              icon: Icon(CupertinoIcons.crop, color: file == null ? Colors.grey : Theme.of(context).iconTheme.color),
+                            )
                           ],
                         ),
                       ),
-                    ),
-                  )
-              ],
-            );
-          },
+                    ],
+                  ),
+                  if (snap.status == Status.loading)
+                    Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.black.withOpacity(0.3),
+                      child: SizedBox(
+                        height: 50,
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              StreamBuilder<double>(
+                                  stream: bloc.progressStream(),
+                                  initialData: 0.0,
+                                  builder: (context, snapshot) {
+                                    // if (snapshot.hasData) {
+                                    double progress = snapshot.data!;
+
+                                    // if (progress != 1.0)
+                                    return LinearPercentIndicator(
+                                      backgroundColor: Colors.white,
+                                      percent: progress,
+                                      lineHeight: 20,
+                                      width: 200,
+                                      barRadius: Radius.circular(12),
+                                      linearGradient: LinearGradient(
+                                        colors: [Colors.teal.shade200, Colors.teal.shade300, Colors.teal.shade400, Colors.teal],
+                                      ),
+                                      animation: true,
+                                      alignment: MainAxisAlignment.center,
+                                      center: Text(
+                                        '${(progress * 100).toStringAsFixed(0)} %',
+                                        style: TextStyle(color: progress > .7 ? Colors.white : Colors.black),
+                                      ),
+                                    );
+                                  }),
+                              Text('Processing...', style: TextStyle(fontSize: 18, color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                ],
+              );
+            },
+          ),
         ),
       ),
       floatingActionButton: StreamBuilder<SnapshotResponse>(
@@ -329,7 +351,7 @@ class _RootPageState extends State<RootPage> {
                         bloc.getMv(fd: form);
                       }
                     },
-              child: Icon(snapData!.status == Status.loading ? Icons.cancel : Icons.upload),
+              child: Icon(snapData!.status == Status.loading ? CupertinoIcons.clear : CupertinoIcons.cloud_upload),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             );
           }),

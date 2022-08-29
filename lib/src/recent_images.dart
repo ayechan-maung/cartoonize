@@ -74,6 +74,8 @@ class _RecentImagesState extends State<RecentImages> {
                                     padding: EdgeInsets.all(2),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                     constraints: BoxConstraints(),
+                                    color: Colors.grey.shade300,
+                                    icon: Icon(Icons.more_vert, color: Colors.grey.shade300),
                                     onSelected: (s) {
                                       if (s == 1) {
                                         saveDialog(context, images[index].imageUrl!);
@@ -132,7 +134,7 @@ class _RecentImagesState extends State<RecentImages> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(height: 10),
-                Text('Are you sure want to delete this photo?'),
+                Text('Are you sure want to delete this photo?', textAlign: TextAlign.center),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -159,7 +161,7 @@ class _RecentImagesState extends State<RecentImages> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Icon(Icons.download, color: Colors.teal),
+            title: Icon(Icons.download),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             titlePadding: EdgeInsets.symmetric(vertical: 4),
@@ -167,7 +169,7 @@ class _RecentImagesState extends State<RecentImages> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(height: 10),
-                Text('Are you sure want to save this photo?'),
+                Text('Are you sure want to save this photo?', textAlign: TextAlign.center),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
