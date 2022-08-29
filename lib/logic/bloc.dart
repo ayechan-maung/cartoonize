@@ -12,6 +12,7 @@ class Bloc extends NetworkRepository {
 
   var progress = 0.0;
   SnapshotResponse snap = SnapshotResponse();
+  // this token for cancel request upload.
   CancelToken? cancelToken;
 
   getMv({Map<String, dynamic>? param, FormData? fd}) async {

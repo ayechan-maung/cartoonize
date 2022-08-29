@@ -21,6 +21,7 @@ class _RecentImagesState extends State<RecentImages> {
   late ValueNotifier<List<ImgFile>> imgs;
   OwnPermissionHandler permissionHandler = OwnPermissionHandler();
 
+  // Refresh image list after delete success.
   refreshImages() async {
     imgs.value = await LocalDatabase.instance.getAllImages();
   }
@@ -28,6 +29,7 @@ class _RecentImagesState extends State<RecentImages> {
   @override
   void initState() {
     super.initState();
+    // Request storage permission for directory.
     permissionHandler.storagePermission();
   }
 
@@ -47,7 +49,9 @@ class _RecentImagesState extends State<RecentImages> {
                 child: Text(snapshot.error.toString()),
               );
             } else if (snapshot.hasData) {
+              // Rebuild for ValueNotifier.
               imgs = ValueNotifier<List<ImgFile>>(snapshot.data!);
+
               if (imgs.value.isNotEmpty) {
                 return ValueListenableBuilder<List<ImgFile>>(
                     valueListenable: imgs,
@@ -60,6 +64,7 @@ class _RecentImagesState extends State<RecentImages> {
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
+                              // Just to see image zoom in and out.
                               Navigator.of(context).push(PhotoViewOverlay(images[index].imageUrl));
                             },
                             child: Stack(

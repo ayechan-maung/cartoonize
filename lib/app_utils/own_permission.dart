@@ -38,24 +38,4 @@ class OwnPermissionHandler {
     }
     return true;
   }
-
-  Future<PermissionStatus> contactPermission() async {
-    PermissionStatus permission = await Permission.contacts.status;
-
-    if (permission.isDenied || permission.isPermanentlyDenied) {
-      permission = await Permission.contacts.request();
-      return permission;
-    } else {
-      return permission;
-    }
-  }
-
-  // void handleInvalidPermissions(PermissionStatus permissionStatus) {
-  //   if (permissionStatus == PermissionStatus.denied) {
-  //     AppUtils.showSnackBar('Access to contact data denied', color: Colors.amber, textColor: Colors.black);
-  //   } else if (permissionStatus == PermissionStatus.permanentlyDenied) {
-  //     AppUtils.showSnackBar('Contact data not available on device', color: Colors.amber, textColor: Colors.black);
-  //     openAppSettings();
-  //   }
-  // }
 }
