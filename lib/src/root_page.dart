@@ -90,48 +90,51 @@ class _RootPageState extends State<RootPage> {
           headerSliverBuilder: (context, b) {
             return [
               CupertinoSliverNavigationBar(
-                  trailing: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
+                stretch: true,
+                trailing: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => RecentImages()),
+                        );
+                      },
+                      icon: Icon(
+                        CupertinoIcons.square_list,
+                        size: 25,
+                      ),
+                    ),
+                    IconButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => RecentImages()),
-                          );
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingPage()));
                         },
                         icon: Icon(
-                          CupertinoIcons.square_list,
+                          CupertinoIcons.settings,
                           size: 25,
-                        ),
+                        ))
+                  ],
+                ),
+                // expandedHeight: 100,
+                largeTitle: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ClipRRect(borderRadius: BorderRadius.circular(6), child: Image.asset('images/logo.png', width: 25, height: 25)),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 6.0),
+                      child: Text(
+                        'Cartoonize',
+                        style: GoogleFonts.kalam(textStyle: Theme.of(context).textTheme.titleLarge),
                       ),
-                      IconButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingPage()));
-                          },
-                          icon: Icon(
-                            CupertinoIcons.settings,
-                            size: 25,
-                          ))
-                    ],
-                  ),
-                  // expandedHeight: 100,
-                  largeTitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      ClipRRect(borderRadius: BorderRadius.circular(6), child: Image.asset('images/logo.png', width: 25, height: 25)),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 6.0),
-                        child: Text(
-                          'Cartoonize',
-                          style: GoogleFonts.kalam(textStyle: Theme.of(context).textTheme.titleLarge),
-                        ),
-                      ),
-                    ],
-                  ))
+                    ),
+                  ],
+                ),
+              )
             ];
           },
           body: SafeArea(
             bottom: true,
+            top: false,
             child: StreamBuilder<SnapshotResponse>(
               stream: bloc.mvStream(),
               initialData: SnapshotResponse(data: null),
@@ -172,6 +175,7 @@ class _RootPageState extends State<RootPage> {
                         if (file != null)
                           Expanded(
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Stack(
                                   fit: StackFit.passthrough,
@@ -316,30 +320,33 @@ class _RootPageState extends State<RootPage> {
           ),
         ),
         floatingActionButton: StreamBuilder<SnapshotResponse>(
-            stream: bloc.mvStream(),
-            initialData: SnapshotResponse(),
-            builder: (context, snapshot) {
-              SnapshotResponse? snapData = snapshot.data;
-              return FloatingActionButton(
-                onPressed: file == null
-                    ? null
-                    : () async {
-                        Map<String, dynamic> m = {};
-                        if (file != null) {
-                          m['file'] = await MultipartFile.fromFile(file!.path, filename: basename(file!.path));
-                          // print(form.fields.toString());
-                        }
-                        FormData form = FormData.fromMap(m);
-                        if (snapData!.status == Status.loading) {
-                          bloc.cancelRequest();
-                        } else {
-                          bloc.getMv(fd: form);
-                        }
-                      },
-                child: Icon(snapData!.status == Status.loading ? CupertinoIcons.clear : CupertinoIcons.cloud_upload),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              );
-            }),
+          stream: bloc.mvStream(),
+          initialData: SnapshotResponse(),
+          builder: (context, snapshot) {
+            SnapshotResponse? snapData = snapshot.data;
+            return FloatingActionButton(
+              onPressed: file == null
+                  ? null
+                  : () async {
+                      Map<String, dynamic> m = {};
+                      if (file != null) {
+                        m['file'] = await MultipartFile.fromFile(file!.path, filename: basename(file!.path));
+                        // print(form.fields.toString());
+                      }
+                      FormData form = FormData.fromMap(m);
+                      if (snapData!.status == Status.loading) {
+                        bloc.cancelRequest();
+                      } else {
+                        bloc.getMv(fd: form);
+                      }
+                    },
+              child: Icon(
+                snapData!.status == Status.loading ? CupertinoIcons.clear : CupertinoIcons.cloud_upload,
+              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            );
+          },
+        ),
       ),
     );
   }

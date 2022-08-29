@@ -33,6 +33,7 @@ class SettingPage extends HookWidget {
       body: Column(children: [
         CardItem(
           pv: 0,
+          pr: 0,
           child: ListTile(
               title: Text('Theme'),
               trailing: Consumer<ThemeProvider>(builder: (context, tp, child) {
