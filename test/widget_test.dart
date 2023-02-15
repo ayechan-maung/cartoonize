@@ -6,26 +6,37 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:cartoonize/pages/my_app.dart';
+import 'package:cartoonize/pages/splash_screen.dart';
+import 'package:cartoonize/provider/theme_provider.dart';
+import 'package:cartoonize/src/root_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 import 'package:cartoonize/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Cartoonize widget test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.runAsync(() async {
+        await tester.pumpWidget(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_)=> ThemeProvider())
+      ],
+      child: MaterialApp(home: SplashScreen())));
+    });
+    
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('Cartoonize Root', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.runAsync(() async {
+        await tester.pumpWidget(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_)=> ThemeProvider())
+      ],
+      child: MaterialApp(home: RootPage())));
+    });
+    
   });
 }

@@ -39,7 +39,8 @@ class _RootPageState extends State<RootPage> {
 
   // Store image to local db after cartoonized.
   _storeImage(String image) {
-    final img = ImgFile(imageUrl: image, dateTime: DateTime.now(), description: '');
+    final img =
+        ImgFile(imageUrl: image, dateTime: DateTime.now(), description: '');
 
     LocalDatabase.instance.storeImage(img);
   }
@@ -55,7 +56,8 @@ class _RootPageState extends State<RootPage> {
     initConnectivity();
 
     // check and listen internet connection.
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
 
     bloc.mvStream().listen((snapshot) {
       if (snapshot.hasData) {
@@ -65,7 +67,9 @@ class _RootPageState extends State<RootPage> {
 
         _storeImage(data!['image_url']);
 
-        Fluttertoast.showToast(msg: 'Your image generated successfully to cartoonize.', backgroundColor: Colors.teal);
+        Fluttertoast.showToast(
+            msg: 'Your image generated successfully to cartoonize.',
+            backgroundColor: Colors.teal);
         Navigator.push(
           key.currentContext!,
           MaterialPageRoute(
@@ -97,7 +101,8 @@ class _RootPageState extends State<RootPage> {
                     IconButton(
                       onPressed: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => RecentImages()),
+                          MaterialPageRoute(
+                              builder: (context) => RecentImages()),
                         );
                       },
                       icon: Icon(
@@ -107,7 +112,8 @@ class _RootPageState extends State<RootPage> {
                     ),
                     IconButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingPage()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SettingPage()));
                         },
                         icon: Icon(
                           CupertinoIcons.settings,
@@ -119,12 +125,16 @@ class _RootPageState extends State<RootPage> {
                 largeTitle: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    ClipRRect(borderRadius: BorderRadius.circular(6), child: Image.asset('images/logo.png', width: 25, height: 25)),
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: Image.asset('images/logo.png',
+                            width: 25, height: 25)),
                     Padding(
                       padding: const EdgeInsets.only(left: 6.0),
                       child: Text(
                         'Cartoonize',
-                        style: GoogleFonts.kalam(textStyle: Theme.of(context).textTheme.titleLarge),
+                        style: GoogleFonts.kalam(
+                            textStyle: Theme.of(context).textTheme.titleLarge),
                       ),
                     ),
                   ],
@@ -162,12 +172,18 @@ class _RootPageState extends State<RootPage> {
                                   child: Text(
                                     'Let\'s get the photo of yours to cartoon,',
                                     textAlign: TextAlign.center,
-                                    style: GoogleFonts.pacifico(textStyle: Theme.of(context).textTheme.bodyLarge),
+                                    style: GoogleFonts.pacifico(
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge),
                                   ),
                                 ),
                                 Text(
                                   'have fun!',
-                                  style: GoogleFonts.pacifico(textStyle: Theme.of(context).textTheme.bodyLarge),
+                                  style: GoogleFonts.pacifico(
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge),
                                 )
                               ],
                             ),
@@ -182,27 +198,32 @@ class _RootPageState extends State<RootPage> {
                                   alignment: Alignment.topRight,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 0.0, vertical: 0),
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
                                         height: size.height * 0.6,
                                         width: size.width * 0.7,
-                                        child: PhotoView(
-                                          controller: pvController,
-                                          imageProvider: FileImage(
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: Image.file(
                                             File(file!.path),
+                                            fit: BoxFit.fitWidth,
                                             // width: size.width * 0.8,
                                             // height: size.height * 0.7,
                                             // fit: BoxFit.cover,
                                           ),
-                                          backgroundDecoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
                                         ),
                                       ),
                                     ),
                                     Container(
-                                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(0.4)),
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.black.withOpacity(0.4)),
                                       child: IconButton(
                                         onPressed: () {
                                           setState(() {
@@ -211,7 +232,8 @@ class _RootPageState extends State<RootPage> {
                                         },
                                         padding: EdgeInsets.all(4),
                                         constraints: BoxConstraints(),
-                                        icon: Icon(CupertinoIcons.clear, color: Colors.white),
+                                        icon: Icon(CupertinoIcons.clear,
+                                            color: Colors.white),
                                       ),
                                     )
                                   ],
@@ -220,7 +242,10 @@ class _RootPageState extends State<RootPage> {
                                 Text(
                                   'Upload your photo to get amazing cartoon image.',
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.slabo27px(textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                                  style: GoogleFonts.slabo27px(
+                                      textStyle: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600)),
                                 )
                               ],
                             ),
@@ -234,7 +259,8 @@ class _RootPageState extends State<RootPage> {
                             children: [
                               IconButton(
                                 onPressed: () async {
-                                  file = await imgPicker.pickImage(source: ImageSource.camera);
+                                  file = await imgPicker.pickImage(
+                                      source: ImageSource.camera);
 
                                   setState(() {});
                                 },
@@ -242,7 +268,8 @@ class _RootPageState extends State<RootPage> {
                               ),
                               IconButton(
                                 onPressed: () async {
-                                  file = await imgPicker.pickImage(source: ImageSource.gallery);
+                                  file = await imgPicker.pickImage(
+                                      source: ImageSource.gallery);
 
                                   setState(() {});
                                 },
@@ -263,7 +290,10 @@ class _RootPageState extends State<RootPage> {
                                     setState(() {});
                                   }
                                 },
-                                icon: Icon(CupertinoIcons.crop, color: file == null ? Colors.grey : Theme.of(context).iconTheme.color),
+                                icon: Icon(CupertinoIcons.crop,
+                                    color: file == null
+                                        ? Colors.grey
+                                        : Theme.of(context).iconTheme.color),
                               )
                             ],
                           ),
@@ -297,17 +327,27 @@ class _RootPageState extends State<RootPage> {
                                         width: 200,
                                         barRadius: Radius.circular(12),
                                         linearGradient: LinearGradient(
-                                          colors: [Colors.teal.shade200, Colors.teal.shade300, Colors.teal.shade400, Colors.teal],
+                                          colors: [
+                                            Colors.teal.shade200,
+                                            Colors.teal.shade300,
+                                            Colors.teal.shade400,
+                                            Colors.teal
+                                          ],
                                         ),
                                         animation: true,
                                         alignment: MainAxisAlignment.center,
                                         center: Text(
                                           '${(progress * 100).toStringAsFixed(0)} %',
-                                          style: TextStyle(color: progress > .7 ? Colors.white : Colors.black),
+                                          style: TextStyle(
+                                              color: progress > .7
+                                                  ? Colors.white
+                                                  : Colors.black),
                                         ),
                                       );
                                     }),
-                                Text('Processing...', style: TextStyle(fontSize: 18, color: Colors.white)),
+                                Text('Processing...',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
                               ],
                             ),
                           ),
@@ -330,7 +370,8 @@ class _RootPageState extends State<RootPage> {
                   : () async {
                       Map<String, dynamic> m = {};
                       if (file != null) {
-                        m['file'] = await MultipartFile.fromFile(file!.path, filename: basename(file!.path));
+                        m['file'] = await MultipartFile.fromFile(file!.path,
+                            filename: basename(file!.path));
                         // print(form.fields.toString());
                       }
                       FormData form = FormData.fromMap(m);
@@ -341,9 +382,12 @@ class _RootPageState extends State<RootPage> {
                       }
                     },
               child: Icon(
-                snapData!.status == Status.loading ? CupertinoIcons.clear : CupertinoIcons.cloud_upload,
+                snapData!.status == Status.loading
+                    ? CupertinoIcons.clear
+                    : CupertinoIcons.cloud_upload,
               ),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
             );
           },
         ),
@@ -425,7 +469,8 @@ class _RootPageState extends State<RootPage> {
   DateTime? currentBackPressTime;
   Future<bool> onWillPop() {
     DateTime now = DateTime.now();
-    if (currentBackPressTime == null || now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
+    if (currentBackPressTime == null ||
+        now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
       currentBackPressTime = now;
       Fluttertoast.showToast(msg: 'Press back again to exit app');
       return Future.value(false);

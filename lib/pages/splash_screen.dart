@@ -13,7 +13,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 0), () {
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => RootPage()), (route) => false);
     });
   }
